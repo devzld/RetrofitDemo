@@ -28,14 +28,14 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 public class HttpUtil {
     private static volatile HttpUtil mInstance;
     private static volatile RetrofitHttpService mService;
-    private Context mAppliactionContext;
+    private Context mApplicationContext;
     private ParamsInterceptor mParamsInterceptor;
     private HeadersInterceptor mHeadersInterceptor;
 
     //构造函数私有，不允许外部调用
-    private HttpUtil(RetrofitHttpService mService, Context mAppliactionContext, ParamsInterceptor mParamsInterceptor, HeadersInterceptor mHeadersInterceptor) {
+    private HttpUtil(RetrofitHttpService mService, Context mApplicationContext, ParamsInterceptor mParamsInterceptor, HeadersInterceptor mHeadersInterceptor) {
         this.mService = mService;
-        this.mAppliactionContext = mAppliactionContext;
+        this.mApplicationContext = mApplicationContext;
         this.mParamsInterceptor = mParamsInterceptor;
         this.mHeadersInterceptor = mHeadersInterceptor;
     }
@@ -49,7 +49,7 @@ public class HttpUtil {
     }
 
     @CheckResult
-    public static HttpUtil getmInstance() {
+    public static HttpUtil getInstance() {
         if (mInstance == null) {
             throw new NullPointerException("HttpUtil has not be initialized");
         }
@@ -70,10 +70,14 @@ public class HttpUtil {
         private List<CallAdapter.Factory> adapterFactories = new ArrayList<>();
         OkHttpClient client;
 
-        public SingletonBuilder(Context context, String baseUrl) {
+        public SingletonBuilder(Context context) {
             appliactionContext = context.getApplicationContext();
-            this.baseUrl = baseUrl;
             client = OkhttpProvidede.okHttpClient(appliactionContext, baseUrl);
+        }
+
+        public SingletonBuilder baseUrl(String baseUrl) {
+            this.baseUrl = baseUrl;
+            return this;
         }
 
         public SingletonBuilder client(OkHttpClient client) {
@@ -114,9 +118,9 @@ public class HttpUtil {
         }
 
         public HttpUtil build() {
-            if (checkNULL(this.baseUrl)) {
-                throw new NullPointerException("BASE_URL can not be null");
-            }
+//            if (checkNULL(this.baseUrl)) {
+//                throw new NullPointerException("BASE_URL can not be null");
+//            }
             if (converterFactories.size() == 0) {
                 converterFactories.add(ScalarsConverterFactory.create());
             }
@@ -132,8 +136,12 @@ public class HttpUtil {
             for (CallAdapter.Factory adapterFactory : adapterFactories) {
                 builder.addCallAdapterFactory(adapterFactory);
             }
+            if (!checkNULL(baseUrl)) {
+                builder.baseUrl(baseUrl);
+            }else {
+                builder.baseUrl("http://zld.com");
+            }
             Retrofit retrofit = builder
-                    .baseUrl(baseUrl + "/")
                     .client(client).build();
             RetrofitHttpService retrofitHttpService =
                     retrofit.create(RetrofitHttpService.class);
@@ -187,10 +195,10 @@ public class HttpUtil {
     static Map<String, Call> CALL_MAP = new HashMap<>();
 
     /*
-    *添加某个请求
-    *@author Administrator
-    *@date 2016/10/12 11:00
-    */
+     *添加某个请求
+     *@author Administrator
+     *@date 2016/10/12 11:00
+     */
     public static synchronized void putCall(Object tag, String url, Call call) {
         if (tag == null)
             return;
@@ -200,11 +208,11 @@ public class HttpUtil {
     }
 
     /*
-    *取消某个界面都所有请求，或者是取消某个tag的所有请求
-    * 如果要取消某个tag单独请求，tag需要转入tag+url
-    *@author Administrator
-    *@date 2016/10/12 10:57
-    */
+     *取消某个界面都所有请求，或者是取消某个tag的所有请求
+     * 如果要取消某个tag单独请求，tag需要转入tag+url
+     *@author Administrator
+     *@date 2016/10/12 10:57
+     */
     public static synchronized void cancel(Object tag) {
         if (tag == null)
             return;
@@ -224,10 +232,10 @@ public class HttpUtil {
     }
 
     /*
-    *移除某个请求
-    *@author Administrator
-    *@date 2016/10/12 10:58
-    */
+     *移除某个请求
+     *@author Administrator
+     *@date 2016/10/12 10:58
+     */
     public static synchronized void removeCall(String url) {
         synchronized (CALL_MAP) {
             for (String key : CALL_MAP.keySet()) {

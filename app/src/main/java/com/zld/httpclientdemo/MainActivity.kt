@@ -10,11 +10,19 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        HttpBuilder("/api/data/Android/10/1")
+        HttpBuilder("api/data/Android/10/1")
                 .params("ky","123")
-                .path("")
                 .success {
                     Logger.i("main", it)
+                }
+                .error {
+                    Toast.makeText(this, it.toString(), Toast.LENGTH_SHORT).show()
+                }
+                .get()
+
+        HttpBuilder("http://v.juhe.cn/toutiao/index")
+                .success {
+                    Logger.i("main",it)
                 }
                 .error {
                     Toast.makeText(this, it.toString(), Toast.LENGTH_SHORT).show()

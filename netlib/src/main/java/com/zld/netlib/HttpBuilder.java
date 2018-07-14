@@ -119,7 +119,7 @@ public class HttpBuilder {
 
 
     private void setParams(String url) {
-        if (HttpUtil.getmInstance() == null) {
+        if (HttpUtil.getInstance() == null) {
             throw new NullPointerException("HttpUtil has not be initialized");
         }
         this.url = url;

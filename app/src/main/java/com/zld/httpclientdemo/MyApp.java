@@ -17,8 +17,8 @@ public class MyApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        new HttpUtil.SingletonBuilder(this,"")
-                .addServerUrl("http://gank.io/")
+        new HttpUtil.SingletonBuilder(this)
+                .baseUrl("http://gank.io")
                 .build();
     }
 }
