@@ -11,21 +11,20 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         HttpBuilder("api/data/Android/10/1")
-                .params("ky","123")
+                .params("ky", "123")
                 .success {
                     Logger.i("main", it)
                 }
                 .error {
-                    Toast.makeText(this, it.toString(), Toast.LENGTH_SHORT).show()
                 }
                 .get()
 
-        HttpBuilder("http://v.juhe.cn/toutiao/index")
+        HttpBuilder("http://v.juhe.cn/toutiao/index1")
                 .success {
-                    Logger.i("main",it)
+                    Logger.i("main", it)
                 }
                 .error {
-                    Toast.makeText(this, it.toString(), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, it[0].toString(), Toast.LENGTH_SHORT).show()
                 }
                 .get()
     }
